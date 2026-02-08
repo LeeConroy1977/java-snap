@@ -3,27 +3,31 @@ package org.lee.conroy;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class CardGame {
-    private String name;
-    private Card lastCard;
-    private Card dealtCard;
-    ArrayList<Card> deckOfCards = new ArrayList<>(52);
-    ArrayList<Card> displayDeck = new ArrayList<>(52);
+    private final String name;
+    final List<Card> deckOfCards = new ArrayList<>();
+    protected final List<Card> displayPile = new ArrayList<>();
 
-    String[] suits = {"♥", "♦", "♣", "♠" };
-    String[] symbol = {"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
-    int[] value = {2,3,4,5,6,7,8,9,10,11,12,13,14};
+    private static final String[] suits = {"♥", "♦", "♣", "♠" };
+    private static final String[] symbol = {"2","3","4","5","6","7","8","9","10","J","Q","K","A"};
+    private static final int[] value = {2,3,4,5,6,7,8,9,10,11,12,13,14};
 
 
 
     public CardGame(String name) {
         this.name = name;
-        for (int i = 0; i < suits.length ; i++) {
-            for (int j = 0; j < symbol.length; j++) {
-                deckOfCards.add(new Card(suits[i], symbol[j], value[j]));
-            }
+        createDeck();
 
+    }
+
+    public void createDeck() {
+        deckOfCards.clear();
+        for (String suit : suits) {
+            for (int i = 0; i < symbol.length; i++) {
+                deckOfCards.add(new Card(suit, symbol[i], value[i]));
+            }
         }
     }
 
@@ -37,35 +41,38 @@ public class CardGame {
         }
     }
 
-    public void getDisplayDeck() {
-        lastCard = displayDeck.get(displayDeck.size() - 2);
-        dealtCard = displayDeck.getLast();
-        displayCard(lastCard);
-        displayCard(dealtCard);
+    public void getDisplayPile() {
+      for (Card card : displayPile) {
+          this.toString(card);
+      }
+
+
 }
     public void dealCard() {
-        displayDeck.add(deckOfCards.remove(0));
+
+        displayPile.add(deckOfCards.removeFirst());
+        this.getDisplayPile();
     }
 
-    public ArrayList<Card> sortDeckInNumberOrder() {
+    public List<Card> sortDeckInNumberOrder() {
         deckOfCards.sort(Comparator.comparing(card -> card.value));
         return deckOfCards;
     }
 
-    public ArrayList<Card> sortDeckIntoSuits() {
+    public List<Card> sortDeckIntoSuits() {
         deckOfCards.sort(Comparator.comparing(card -> card.suit));
         return deckOfCards;
     }
-    public ArrayList<Card> shuffleDeck() {
+    public void shuffleDeck() {
         Collections.shuffle(deckOfCards);
-        return deckOfCards;
     }
 
 
-public static void  displayCard(Card card) {
-    System.out.println(card.symbol + " " + card.suit);
+public void toString(Card card) {
+    System.out.println(card.toString());
 }
 
 
-    }
+
+}
 
