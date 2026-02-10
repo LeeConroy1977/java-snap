@@ -1,8 +1,10 @@
 package game;
 import java.util.Scanner;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeoutException;
 
 public class Main {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ExecutionException, InterruptedException, TimeoutException {
         Scanner scanner = new Scanner(System.in);
         Snap snap = new Snap("Snap");
 

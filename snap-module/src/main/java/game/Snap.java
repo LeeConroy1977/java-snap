@@ -1,9 +1,7 @@
 package game;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
+import java.util.concurrent.*;
 
 public class Snap extends CardGame{
     private final List<Player> players = new ArrayList<Player>(2);
@@ -14,9 +12,7 @@ public class Snap extends CardGame{
     }
 
     protected boolean isSnap() {
-        if (displayPile.size() < players.size()) {
-            return false;
-        }
+        if  (displayPile.size() < 2) return false;
 
         Card last = displayPile.getLast();
         Card secondLast = displayPile.get(displayPile.size() - 2);
@@ -30,7 +26,7 @@ public class Snap extends CardGame{
 
     protected PlayerAndIndex getRandomStartingPlayer() {
         int index = RANDOM.nextInt(players.size());
-        return new PlayerAndIndex(players.get(index), index + 1);
+        return new PlayerAndIndex(players.get(index), index);
     }
 
    public  record PlayerAndIndex(Player player, int index) {}
@@ -43,7 +39,8 @@ public class Snap extends CardGame{
         return List.copyOf(players);
     }
 
-    protected void startGame(Scanner scanner) {
+    protected void startGame(Scanner scanner) throws ExecutionException, InterruptedException, TimeoutException {
+        Timer myTimer = new Timer();
         Player activePlayer;
         int activeIndex;
         shuffleDeck();
@@ -54,15 +51,39 @@ public class Snap extends CardGame{
         activePlayer = starter.player();
         activeIndex = starter.index();
 
+
         while (true) {
             scanner.nextLine();
             System.out.println(activePlayer.name() + "'s  turn ");
             dealCard();
 
-
             if (isSnap()) {
-                System.out.println("\nSNAP! "  +  activePlayer.name() + " Wins ");
-                break;
+                System.out.println("Quick.....Type snap to win.......");
+                ExecutorService executor = Executors.newSingleThreadExecutor();
+                Future<String> futureInput = executor.submit(() -> {
+                    byte[] inputBytes = new byte[20];
+                    int bytesRead = System.in.read(inputBytes);
+                    return new String(inputBytes, 0, bytesRead).trim();
+                });
+
+                try {
+                    String winInput = futureInput.get(2, TimeUnit.SECONDS);
+                    if ("snap".equalsIgnoreCase(winInput.trim())) {
+                        System.out.println("SNAP! " + activePlayer.name() + " Wins!");
+                        break;
+                    } else {
+                        System.out.println("Wrong input! You lose SLOW SNAPPER...");
+                        break;
+                    }
+                } catch (TimeoutException e) {
+                    System.out.println("Too slow! You lose SLOW SNAPPER...");
+                    futureInput.cancel(true);
+                    break;
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                } finally {
+                    executor.shutdownNow();
+                }
             }
 
             if (!hasCardsLeft()) {
@@ -70,8 +91,8 @@ public class Snap extends CardGame{
                 break;
             }
 
+            activeIndex = (activeIndex + 1) % 2;
             activePlayer = getPlayers().get(activeIndex);
-            activeIndex = (activeIndex + 1) % players.size();
         }
 
         scanner.close();
