@@ -1,4 +1,4 @@
-package org.lee.conroy;
+package game;
 
 public class Card {
     final String suit;
@@ -16,7 +16,11 @@ public class Card {
         return symbol + " " + suit;
     }
 
-    public Object getValue() {
+    protected Object getValue() {
         return value;
+    }
+
+    protected String getSuit() {
+        return suit;
     }
 }
