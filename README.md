@@ -4,7 +4,7 @@ Don't be a slow SNAPPER.
 
 ## Snap Overview
 
-Welcome to my snap game. This is a two player card game where players take alternative goes to draw a card from the deck. Any player that draws a card that matches the symbol of the previous card will have two second the enter the word 'snap'. Failure to do this will result in a loss.
+Welcome to my snap game. This is a two player card game where players take alternative goes to draw a card from the deck. Any player that draws a card that matches the symbol of the previous card will have two seconds to the enter the word 'snap'. Failure to do this will result in a loss.
 
 ## Using Snap
 
