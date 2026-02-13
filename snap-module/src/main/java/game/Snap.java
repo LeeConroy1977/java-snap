@@ -40,7 +40,7 @@ public class Snap extends CardGame{
     }
 
     protected void startGame(Scanner scanner) throws ExecutionException, InterruptedException, TimeoutException {
-        Timer myTimer = new Timer();
+
         Player activePlayer;
         int activeIndex;
         shuffleDeck();
